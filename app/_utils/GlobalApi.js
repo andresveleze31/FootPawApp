@@ -86,6 +86,69 @@ const GetProductDetails = async (id) => {
   return result;
 };
 
+const GetOrdersUser = async (id) => {
+  const query = gql`
+    query GetOrdersUser {
+      orders(where: { userid: "`+id+`" }) {
+        id
+        name
+        phone
+        productocantidad {
+          product {
+            id
+            image {
+              url
+            }
+            name
+          }
+          cantidad
+        }
+        total
+        email
+        country
+        city
+        adress
+      }
+    }
+  `;
+
+  const result = await request(MASTER_URL, query);
+  return result;
+};
+
+const GetOrderById = async (id) => {
+  const query = gql`
+    query GetOrderById {
+      order(where: { id: "`+id+`" }) {
+        adress
+        city
+        country
+        email
+        id
+        name
+        phone
+        productocantidad {
+          cantidad
+          id
+          product {
+            id
+            image {
+              url
+            }
+            name
+            price
+          }
+        }
+        total
+        zipcode
+      }
+    }
+  `;
+
+  const result = await request(MASTER_URL, query);
+  return result;
+};
+
 const CreateOrder = async (order) => {
   const mutation =
     gql`
@@ -166,4 +229,6 @@ export default {
   GetProductDetails,
   CreateOrder,
   UpdateOrderCantidad,
+  GetOrdersUser,
+  GetOrderById,
 };
