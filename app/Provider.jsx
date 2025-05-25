@@ -5,6 +5,7 @@ import Navbar from "./_components/Navbar";
 import Footer from "./_components/Footer";
 import { useCart } from "./_context/CartContext";
 import CrispProvider from "./_components/CrispProvider";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 const Provider = ({ children }) => {
   const { isInitialized } = useCart();
@@ -19,11 +20,15 @@ const Provider = ({ children }) => {
 
   return (
     <div>
-      <CrispProvider />
-      <Header />
-      <Navbar />
-      {children}
-      <Footer />
+      <PayPalScriptProvider
+        options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
+      >
+        <CrispProvider />
+        <Header />
+        <Navbar />
+        {children}
+        <Footer />
+      </PayPalScriptProvider>
     </div>
   );
 };

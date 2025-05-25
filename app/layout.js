@@ -27,14 +27,15 @@ const outfit = Outfit({ subsets: ["latin"] });
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <CrispProvider />
-        <body className={outfit.className}>
-          <CartProvider>
-            <Provider>{children}</Provider>
-          </CartProvider>
-        </body>
-      </html>
+     
+        <html lang="en">
+          <CrispProvider />
+          <body className={outfit.className}>
+            <CartProvider>
+              <Provider>{children}</Provider>
+            </CartProvider>
+          </body>
+        </html>
     </ClerkProvider>
   );
 }

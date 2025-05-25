@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -8,50 +8,49 @@ import { Trash2, Plus, Minus } from "lucide-react";
 import { useCart } from "@/app/_context/CartContext";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import { useUser } from "@clerk/nextjs";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 const CheckoutPage = () => {
-  const { user, isLoaded } = useUser();
-
-  const { cart, updateQuantity, removeFromCart, isInitialized } = useCart();
+  const { user } = useUser();
+  const { cart, updateQuantity, removeFromCart, isInitialized, clearCart } =
+    useCart();
+  const formRef = useRef();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log("Order submitted:", { ...data, cart });
-
-
     const order = {
       userid: user.id,
       name: data.name,
-      country:data.county,
+      country: data.county,
       city: data.city,
       email: data.email,
       phone: data.phone,
       zip: data.zip,
       address: data.address,
-      total: getTotalPrice()
-    }
+      total: getTotalPrice(),
+      status: "COMPLETED",
+      paymentMethod: "PayPal",
+    };
 
-    GlobalApi.CreateOrder(order).then(resp => {
+    GlobalApi.CreateOrder(order).then((resp) => {
       const resultId = resp?.createOrder?.id;
-      if(resultId){
+      if (resultId) {
         cart.forEach((item) => {
-          const producto = {
+          GlobalApi.UpdateOrderCantidad({
             id: item.id,
             pedidoId: resultId,
             cantidad: item.quantity,
-          };
-          GlobalApi.UpdateOrderCantidad(producto)
-
-        })
+          });
+        });
+        clearCart();
+        window.location.href = `/order-success?id=${resultId}`;
       }
     });
-
-    
   };
 
   const getTotalPrice = () => {
@@ -68,7 +67,11 @@ const CheckoutPage = () => {
           {/* Formulario */}
           <div>
             <h2 className="text-2xl font-bold mb-5">Billing Details</h2>
-            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="space-y-4"
+              onSubmit={handleSubmit(onSubmit)}
+              ref={formRef}
+            >
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Input
@@ -154,9 +157,35 @@ const CheckoutPage = () => {
                 <p className="text-red-500 text-sm">{errors.address.message}</p>
               )}
 
-              <Button type="submit" className="w-full bg-[#0a4253] text-white">
-                Place Order
-              </Button>
+              <PayPalButtons
+                disabled={!isValid || cart.length === 0}
+                style={{ layout: "horizontal" }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          value: getTotalPrice().toFixed(2),
+                          currency_code: "USD",
+                        },
+                      },
+                    ],
+                  });
+                }}
+                onApprove={(data, actions) => {
+                  return actions.order.capture().then(() => {
+                    const submitEvent = new Event("submit", {
+                      cancelable: true,
+                      bubbles: true,
+                    });
+                    formRef.current.dispatchEvent(submitEvent);
+                  });
+                }}
+                onError={(err) => {
+                  console.error("PayPal error:", err);
+                  // Aquí puedes mostrar un mensaje de error al usuario
+                }}
+              />
             </form>
           </div>
 
