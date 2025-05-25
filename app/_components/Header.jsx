@@ -133,7 +133,7 @@ const Header = () => {
                       <ShoppingBag className="mx-auto mb-4" size={48} />
                       <p>Tu carrito está vacío</p>
                       <Button className="mt-4" asChild>
-                        <Link href="/products">Ver productos</Link>
+                        <Link href="/shop">Ver productos</Link>
                       </Button>
                     </div>
                   ) : (
@@ -152,7 +152,7 @@ const Header = () => {
                           />
                           <div className="flex-1">
                             <Link
-                              href={`/products/${item.id}`}
+                              href={`/shop/${item.id}`}
                               className="font-medium hover:underline"
                             >
                               {item.name}
