@@ -6,6 +6,7 @@ import Footer from "./_components/Footer";
 import { useCart } from "./_context/CartContext";
 import CrispProvider from "./_components/CrispProvider";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { Loader } from "lucide-react";
 
 const Provider = ({ children }) => {
   const { isInitialized } = useCart();
@@ -13,7 +14,9 @@ const Provider = ({ children }) => {
   if (!isInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
+        <div className="animate-spin">
+          <Loader />
+        </div>
       </div>
     );
   }

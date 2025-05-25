@@ -77,6 +77,9 @@ const GetProductDetails = async (id) => {
               url
             }
           }
+          nutritionalInfo {
+            url
+          }
           
         }
       }
@@ -117,9 +120,12 @@ const GetOrdersUser = async (id) => {
 };
 
 const GetOrderById = async (id) => {
-  const query = gql`
+  const query =
+    gql`
     query GetOrderById {
-      order(where: { id: "`+id+`" }) {
+      order(where: { id: "` +
+    id +
+    `" }) {
         adress
         city
         country
@@ -141,6 +147,17 @@ const GetOrderById = async (id) => {
         }
         total
         zipcode
+        tracking {
+          description
+          id
+          images {
+            url
+          }
+          orderGuide {
+           url
+          }
+          statename
+        }
       }
     }
   `;

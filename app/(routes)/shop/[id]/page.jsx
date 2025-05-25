@@ -166,14 +166,15 @@ const ProductPage = () => {
       </div>
 
       <Tabs defaultValue="description" className="w-full items-center mt-20">
-        <TabsList className="w-full md:w-1/2">
+        <TabsList className="w-full md:w-2/3">
           <TabsTrigger value="description">Description</TabsTrigger>
           <TabsTrigger value="certifications">Certifications</TabsTrigger>
           <TabsTrigger value="tracking">Tracking</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger value="nutritional">Nutritional Information</TabsTrigger>
         </TabsList>
 
-        <TabsContent className="mt-10 md:w-1/2" value="description">
+        <TabsContent className="mt-10 md:w-2/3" value="description">
           <div
             className="prose"
             dangerouslySetInnerHTML={{
@@ -182,7 +183,7 @@ const ProductPage = () => {
           />
         </TabsContent>
 
-        <TabsContent className="mt-10 w-full md:w-1/2" value="certifications">
+        <TabsContent className="mt-10 w-full md:w-2/3" value="certifications">
           {productDetails.certifications?.map((cert, index) => (
             <Link
               key={index}
@@ -198,7 +199,7 @@ const ProductPage = () => {
           ))}
         </TabsContent>
 
-        <TabsContent className="mt-10 w-full md:w-1/2" value="tracking">
+        <TabsContent className="mt-10 w-full md:w-2/3" value="tracking">
           <h1 className="text-center font-bold text-2xl">Tracking Points</h1>
           <Accordion
             className="w-full mt-5 flex flex-col gap-4"
@@ -233,6 +234,16 @@ const ProductPage = () => {
           <div className="text-center py-10">
             <p>No reviews yet</p>
           </div>
+        </TabsContent>
+
+        <TabsContent className="mt-10" value="nutritional">
+          <Image 
+            src={productDetails.nutritionalInfo?.url}
+            height={600}
+            width={600}
+            alt="Nutritional Info"
+            className="w-full h-full"
+          />
         </TabsContent>
       </Tabs>
 
